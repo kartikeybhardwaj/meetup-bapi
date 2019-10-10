@@ -40,7 +40,7 @@ class UserDb:
         return json.loads(dumps(result))
 
     def insertUser(self, username, password, email):
-        self.__db.users.insert_one({
+        _id = self.__db.users.insert_one({
             "username": username,
             "password": password,
             "displayname": username,
@@ -56,4 +56,5 @@ class UserDb:
             },
             "createdMeetups": [],
             "joinedMeetups": []
-        })
+        }).inserted_id
+        return str(_id)
