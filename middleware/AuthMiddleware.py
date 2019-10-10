@@ -57,7 +57,8 @@ class AuthMiddleware:
                     resp.body = json.dumps(decoded_jwt)
         elif req_succeeded and req.method != "OPTIONS" and req.path == "/login":
             respBody = json.loads(resp.body)
-            _id = respBody["returnData"]["_id"]["$oid"]
-            encoded_jwt = self.jwt.encode(respBody).decode("utf-8")
-            respBody["token"] = encoded_jwt
-            resp.body = json.dumps(respBody)
+            if respBody["responseId"] == 211:
+                _id = respBody["returnData"]["_id"]["$oid"]
+                encoded_jwt = self.jwt.encode(respBody).decode("utf-8")
+                respBody["token"] = encoded_jwt
+                resp.body = json.dumps(respBody)

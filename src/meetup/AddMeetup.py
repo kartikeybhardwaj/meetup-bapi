@@ -1,6 +1,7 @@
 import json
 from bson.objectid import ObjectId
 
+from utils.Utils import Utils
 from database.user.UserDb import UserDb
 from database.meetup.MeetupDb import MeetupDb
 
@@ -43,18 +44,19 @@ class AddMeetup:
         responseObj = {}
         responseObj["message"] = ""
         responseObj["returnData"] = ""
+        utils = Utils()
         self.__meetup["title"] = reqData.get("title", "")
         self.__meetup["description"] = reqData.get("description", "")
         self.__meetup["location"]["title"] = reqData.get("location", "").get("title", "")
         self.__meetup["location"]["country"] = reqData.get("location", "").get("country", "")
         self.__meetup["location"]["latitude"] = reqData.get("location", "").get("latitude", "")
         self.__meetup["location"]["longitude"] = reqData.get("location", "").get("longitude", "")
-        self.__meetup["timeline"]["from"] = reqData.get("timeline", "").get("from", "")
-        self.__meetup["timeline"]["to"] = reqData.get("timeline", "").get("to", "")
+        self.__meetup["timeline"]["from"] = utils.getDateFromUTCString(reqData.get("timeline", "").get("from", ""))
+        self.__meetup["timeline"]["to"] = utils.getDateFromUTCString(reqData.get("timeline", "").get("to", ""))
         self.__meetup["isPrivate"] = reqData.get("isPrivate", False)
         self.__meetup["joinedBy"] = [ObjectId(req.params["userId"])]
         self.__meetup["metadata"]["createdBy"] = ObjectId(req.params["userId"])
-        self.__meetup["metadata"]["createdOn"] = reqData.get("metadata", "").get("createdOn", "")
+        self.__meetup["metadata"]["createdOn"] = utils.getDateFromUTCString(reqData.get("metadata", "").get("createdOn", ""))
         try:
             # validate required data
             if self.validateTitle() and self.validateDescription() and self.validateTimeline():
