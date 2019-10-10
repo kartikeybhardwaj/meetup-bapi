@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from bson.json_util import dumps
 import json
 
@@ -9,7 +10,7 @@ class UserDb:
         self.__client = MongoClient('mongodb://kart:oon@127.0.0.1:27017/meetup')
         self.__db = self.__client.meetup
 
-    def checkUserExistence(self, username="", email=""):
+    def checkUserExistence(self, username="", email="") -> bool:
         isAlreadyExisting = False
         if username and email:
             isAlreadyExisting = self.__db.users.find({
@@ -24,7 +25,7 @@ class UserDb:
                     }).count() > 0
         return isAlreadyExisting
 
-    def findOneUser(self, username="", email=""):
+    def findOneUser(self, username="", email="") -> dict:
         result = {}
         if username and email:
             result = self.__db.users.find_one({
@@ -39,7 +40,7 @@ class UserDb:
                 })
         return json.loads(dumps(result))
 
-    def insertUser(self, username, password, email):
+    def insertUser(self, username: str, password: str, email: str) -> str:
         _id = self.__db.users.insert_one({
             "username": username,
             "password": password,
@@ -58,3 +59,21 @@ class UserDb:
             "joinedMeetups": []
         }).inserted_id
         return str(_id)
+
+    def addToCreatedMeetups(self, userId: str, meetupId: str) -> bool:
+        return self.__db.users.update_one({
+            "_id": ObjectId(userId)
+        }, {
+            "$addToSet": {
+                "createdMeetups": ObjectId(meetupId)
+            }
+        }).modified_count == 1
+
+    def addToJoinedMeetups(self, userId: str, meetupId: str) -> bool:
+        return self.__db.users.update_one({
+            "_id": ObjectId(userId)
+        }, {
+            "$push": {
+                "joinedMeetups": ObjectId(meetupId)
+            }
+        }).modified_count == 1

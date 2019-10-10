@@ -1,7 +1,8 @@
 import json
 from bson.objectid import ObjectId
 
-from src.meetupdb.MeetupDb import MeetupDb
+from database.user.UserDb import UserDb
+from database.meetup.MeetupDb import MeetupDb
 
 class AddMeetup:
 
@@ -51,17 +52,22 @@ class AddMeetup:
         self.__meetup["timeline"]["from"] = reqData.get("timeline", "").get("from", "")
         self.__meetup["timeline"]["to"] = reqData.get("timeline", "").get("to", "")
         self.__meetup["isPrivate"] = reqData.get("isPrivate", False)
-        self.__meetup["joinedBy"] = [ObjectId(reqData.get("metadata", "").get("createdBy", ""))] # reqData.get("joinedBy", [])
-        self.__meetup["metadata"]["createdBy"] = ObjectId(reqData.get("metadata", "").get("createdBy", ""))
+        self.__meetup["joinedBy"] = [ObjectId(req.params["userId"])]
+        self.__meetup["metadata"]["createdBy"] = ObjectId(req.params["userId"])
         self.__meetup["metadata"]["createdOn"] = reqData.get("metadata", "").get("createdOn", "")
         try:
             # validate required data
             if self.validateTitle() and self.validateDescription() and self.validateTimeline():
                 meetupdb = MeetupDb()
                 # insert meetup
-                _id = meetupdb.insertMeetup(self.__meetup)
+                meetupId = meetupdb.insertMeetup(self.__meetup)
+                userdb = UserDb()
+                # add to created meetups by user
+                userdb.addToCreatedMeetups(req.params["userId"], meetupId)
+                # add to joined meetups by user
+                userdb.addToJoinedMeetups(req.params["userId"], meetupId)
                 # get this meetup data
-                responseObj["returnData"] = meetupdb.findOneMeetup(_id)
+                responseObj["returnData"] = meetupdb.findOneMeetup(meetupId)
                 responseObj["responseId"] = 211
             else:
                 responseObj["responseId"] = 111

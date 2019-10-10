@@ -1,6 +1,6 @@
 import json
 
-from src.userdb.UserDb import UserDb
+from database.user.UserDb import UserDb
 from utils.Crypto import Crypto
 
 class UserLogin:

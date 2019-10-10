@@ -30,6 +30,8 @@ class AuthMiddleware:
                         "message": "token expired"
                     })
                     resp.complete = True
+                else:
+                    req.params["userId"] = decoded_jwt["returnData"]["_id"]["$oid"]
 
     def process_response(self, req, resp, resource, req_succeeded):
         """Post-processing of the response (after routing).

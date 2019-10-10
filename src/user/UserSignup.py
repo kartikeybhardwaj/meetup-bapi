@@ -1,6 +1,6 @@
 import json, re
 
-from src.userdb.UserDb import UserDb
+from database.user.UserDb import UserDb
 
 class UserSignup:
 
