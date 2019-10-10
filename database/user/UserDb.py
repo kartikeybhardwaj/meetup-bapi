@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 import json
+import datetime
 
 class UserDb:
 
@@ -56,7 +57,10 @@ class UserDb:
                 "verifiedOn": None
             },
             "createdMeetups": [],
-            "joinedMeetups": []
+            "joinedMeetups": [],
+            "metadata": {
+                "signupOn": datetime.datetime.utcnow()
+            }
         }).inserted_id
         return str(_id)
 
