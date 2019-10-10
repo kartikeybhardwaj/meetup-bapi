@@ -1,7 +1,8 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING, DESCENDING
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 import json
+import datetime
 
 class MeetupDb:
 
@@ -28,3 +29,33 @@ class MeetupDb:
                 "joinedBy": ObjectId(userId)
             }
         }).modified_count == 1
+
+    def findUpcomingMeetups(self):
+        result = self.__db.meetups.find({
+            "timeline.from": {
+                "$gt": datetime.datetime.utcnow()
+            },
+            "isPrivate": False
+        })
+        return json.loads(dumps(result))
+
+    def findLiveMeetups(self):
+        result = self.__db.meetups.find({
+            "timeline.from": {
+                "$lt": datetime.datetime.utcnow()
+            },
+            "timeline.to": {
+                "$gt": datetime.datetime.utcnow()
+            },
+            "isPrivate": False
+        })
+        return json.loads(dumps(result))
+
+    def findPreviousMeetups(self):
+        result = self.__db.meetups.find({
+            "timeline.to": {
+                "$lt": datetime.datetime.utcnow()
+            },
+            "isPrivate": False
+        }).sort("timeline.to", DESCENDING)
+        return json.loads(dumps(result))
