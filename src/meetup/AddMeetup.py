@@ -1,0 +1,72 @@
+import json
+from bson.objectid import ObjectId
+
+from src.meetupdb.MeetupDb import MeetupDb
+
+class AddMeetup:
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__meetup = {
+            "title": "",
+            "description": "",
+            "location": {
+                "title": "",
+                "country": "",
+                "latitude": "",
+                "longitude": ""
+            },
+            "timeline": {
+                "from": "",
+                "to": ""
+            },
+            "isPrivate": False,
+            "joinedBy": [],
+            "metadata": {
+                "createdBy": "",
+                "createdOn": ""
+            }
+        }
+
+    def validateTitle(self):
+        return True if self.__meetup["title"] else False
+    
+    def validateDescription(self):
+        return True if self.__meetup["description"] else False
+    
+    def validateTimeline(self):
+        return True if self.__meetup["timeline"]["from"] and self.__meetup["timeline"]["to"] else False
+
+    def on_post(self, req, resp):
+        reqData = req.media
+        responseObj = {}
+        responseObj["message"] = ""
+        responseObj["returnData"] = ""
+        self.__meetup["title"] = reqData.get("title", "")
+        self.__meetup["description"] = reqData.get("description", "")
+        self.__meetup["location"]["title"] = reqData.get("location", "").get("title", "")
+        self.__meetup["location"]["country"] = reqData.get("location", "").get("country", "")
+        self.__meetup["location"]["latitude"] = reqData.get("location", "").get("latitude", "")
+        self.__meetup["location"]["longitude"] = reqData.get("location", "").get("longitude", "")
+        self.__meetup["timeline"]["from"] = reqData.get("timeline", "").get("from", "")
+        self.__meetup["timeline"]["to"] = reqData.get("timeline", "").get("to", "")
+        self.__meetup["isPrivate"] = reqData.get("isPrivate", False)
+        self.__meetup["joinedBy"] = [ObjectId(reqData.get("metadata", "").get("createdBy", ""))] # reqData.get("joinedBy", [])
+        self.__meetup["metadata"]["createdBy"] = ObjectId(reqData.get("metadata", "").get("createdBy", ""))
+        self.__meetup["metadata"]["createdOn"] = reqData.get("metadata", "").get("createdOn", "")
+        try:
+            # validate required data
+            if self.validateTitle() and self.validateDescription() and self.validateTimeline():
+                meetupdb = MeetupDb()
+                # insert meetup
+                _id = meetupdb.insertMeetup(self.__meetup)
+                # get this meetup data
+                responseObj["returnData"] = meetupdb.findOneMeetup(_id)
+                responseObj["responseId"] = 211
+            else:
+                responseObj["responseId"] = 111
+                responseObj["message"] = "check if all the fields are valid"
+        except Exception as ex:
+            responseObj["responseId"] = 111
+        responseObj["message"] = "some error occurred"
+        resp.body = json.dumps(responseObj)
