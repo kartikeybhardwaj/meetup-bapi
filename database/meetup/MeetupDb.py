@@ -30,7 +30,7 @@ class MeetupDb:
             }
         }).modified_count == 1
 
-    def findUpcomingMeetups(self):
+    def findUpcomingMeetups(self) -> dict:
         result = self.__db.meetups.find({
             "timeline.from": {
                 "$gt": datetime.datetime.utcnow()
@@ -39,7 +39,7 @@ class MeetupDb:
         })
         return json.loads(dumps(result))
 
-    def findLiveMeetups(self):
+    def findLiveMeetups(self) -> dict:
         result = self.__db.meetups.find({
             "timeline.from": {
                 "$lt": datetime.datetime.utcnow()
@@ -51,11 +51,23 @@ class MeetupDb:
         })
         return json.loads(dumps(result))
 
-    def findPreviousMeetups(self):
+    def findPreviousMeetups(self) -> dict:
         result = self.__db.meetups.find({
             "timeline.to": {
                 "$lt": datetime.datetime.utcnow()
             },
             "isPrivate": False
         }).sort("timeline.to", DESCENDING)
+        return json.loads(dumps(result))
+
+    def findMyCreatedMeetups(self, userId: str) -> dict:
+        result = self.__db.meetups.find({
+            "metadata.createdBy": ObjectId(userId)
+        }).sort("metadata.createdOn", DESCENDING)
+        return json.loads(dumps(result))
+
+    def findMyJoinedMeetups(self, userId: str) -> dict:
+        result = self.__db.meetups.find({
+            "joinedBy": ObjectId(userId)
+        }).sort("timeline.from", DESCENDING)
         return json.loads(dumps(result))

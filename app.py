@@ -10,6 +10,8 @@ from src.meetup.Register import Register
 from src.meetup.GetLiveMeetups import GetLiveMeetups
 from src.meetup.GetUpcomingMeetups import GetUpcomingMeetups
 from src.meetup.GetPreviousMeetups import GetPreviousMeetups
+from src.meetup.GetMyCreatedMeetups import GetMyCreatedMeetups
+from src.meetup.GetMyJoinedMeetups import GetMyJoinedMeetups
 from utils.Empty import Empty
 
 cors = CORS(allow_origins_list = ['http://localhost:4200'],
@@ -30,6 +32,8 @@ api.add_route('/register-to-meetup', Register())
 api.add_route('/get-live-meetups', GetLiveMeetups())
 api.add_route('/get-upcoming-meetups', GetUpcomingMeetups())
 api.add_route('/get-previous-meetups', GetPreviousMeetups())
+api.add_route('/get-my-created-meetups', GetMyCreatedMeetups())
+api.add_route('/get-my-joined-meetups', GetMyJoinedMeetups())
 
 # pip3 install falcon
 # pip3 install falcon-cors
