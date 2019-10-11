@@ -42,4 +42,5 @@ api.add_route('/register-to-google-calendar', RegisterGoogleCalendarEventMeetup(
 # pip3 install pymongo
 # pip3 install pyjwt
 # pip3 install gunicorn
-# gunicorn -b localhost:3200 app:api --reload
+# gunicorn -b localhost:3200 app:api 
+# --daemon --reload
