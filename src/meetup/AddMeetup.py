@@ -54,7 +54,7 @@ class AddMeetup:
         self.__meetup["timeline"]["from"] = utils.getDateFromUTCString(reqData.get("timeline", "").get("from", ""))
         self.__meetup["timeline"]["to"] = utils.getDateFromUTCString(reqData.get("timeline", "").get("to", ""))
         self.__meetup["isPrivate"] = reqData.get("isPrivate", False)
-        self.__meetup["joinedBy"] = [ObjectId(req.params["userId"])]
+        self.__meetup["joinedBy"] = []
         self.__meetup["metadata"]["createdBy"] = ObjectId(req.params["userId"])
         self.__meetup["metadata"]["createdOn"] = utils.getDateFromUTCString(reqData.get("metadata", "").get("createdOn", ""))
         try:
@@ -63,6 +63,8 @@ class AddMeetup:
                 meetupdb = MeetupDb()
                 # insert meetup
                 meetupId = meetupdb.insertMeetup(self.__meetup)
+                # add user as joining user
+                meetupdb.registerToMeetup(req.params["userId"], meetupId)
                 userdb = UserDb()
                 # add to created meetups by user
                 userdb.addToCreatedMeetups(req.params["userId"], meetupId)

@@ -69,7 +69,9 @@ class UserDb:
             "_id": ObjectId(userId)
         }, {
             "$addToSet": {
-                "createdMeetups": ObjectId(meetupId)
+                "createdMeetups": {
+                    "meetupId": ObjectId(meetupId)
+                }
             }
         }).modified_count == 1
 
@@ -78,6 +80,8 @@ class UserDb:
             "_id": ObjectId(userId)
         }, {
             "$push": {
-                "joinedMeetups": ObjectId(meetupId)
+                "joinedMeetups": {
+                    "meetupId": ObjectId(meetupId)
+                }
             }
         }).modified_count == 1
