@@ -12,6 +12,7 @@ from src.meetup.GetUpcomingMeetups import GetUpcomingMeetups
 from src.meetup.GetPreviousMeetups import GetPreviousMeetups
 from src.meetup.GetMyCreatedMeetups import GetMyCreatedMeetups
 from src.meetup.GetMyJoinedMeetups import GetMyJoinedMeetups
+from src.meetup.RegisterGoogleCalendarEventMeetup import RegisterGoogleCalendarEventMeetup
 from utils.Empty import Empty
 
 cors = CORS(allow_origins_list = ['http://localhost:4200'],
@@ -34,6 +35,7 @@ api.add_route('/get-upcoming-meetups', GetUpcomingMeetups())
 api.add_route('/get-previous-meetups', GetPreviousMeetups())
 api.add_route('/get-my-created-meetups', GetMyCreatedMeetups())
 api.add_route('/get-my-joined-meetups', GetMyJoinedMeetups())
+api.add_route('/register-to-google-calendar', RegisterGoogleCalendarEventMeetup())
 
 # pip3 install falcon
 # pip3 install falcon-cors
