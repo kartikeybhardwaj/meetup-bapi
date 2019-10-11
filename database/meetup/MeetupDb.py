@@ -26,7 +26,26 @@ class MeetupDb:
             "_id": ObjectId(meetupId)
         }, {
             "$push": {
-                "joinedBy": ObjectId(userId)
+                "joinedBy": {
+                    "userId": ObjectId(userId),
+                    "googleCalendarMeta": {
+                        "added": False,
+                        "htmlLink": ""
+                    }
+                }
+            }
+        }).modified_count == 1
+
+    def googleCalendarToMeetup(self, userId: str, meetupId: str, htmlLink: str) -> bool:
+        return self.__db.meetups.update_one({
+            "_id": ObjectId(meetupId),
+            "joinedBy.userId": ObjectId(userId)
+        }, {
+            "$set": {
+                "joinedBy.$.googleCalendarMeta": {
+                    "added": True,
+                    "htmlLink": htmlLink
+                }
             }
         }).modified_count == 1
 
@@ -68,6 +87,6 @@ class MeetupDb:
 
     def findMyJoinedMeetups(self, userId: str) -> dict:
         result = self.__db.meetups.find({
-            "joinedBy": ObjectId(userId)
+            "joinedBy.userId": ObjectId(userId)
         }).sort("timeline.from", DESCENDING)
         return json.loads(dumps(result))
