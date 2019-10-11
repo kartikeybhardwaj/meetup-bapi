@@ -15,7 +15,7 @@ from src.meetup.GetMyJoinedMeetups import GetMyJoinedMeetups
 from src.meetup.RegisterGoogleCalendarEventMeetup import RegisterGoogleCalendarEventMeetup
 from utils.Empty import Empty
 
-cors = CORS(allow_origins_list = ['http://localhost:4200'],
+cors = CORS(allow_origins_list = ['http://localhost:4200', "http://kilobyte.world:4200"],
             allow_all_headers = True,
             allow_all_methods = True)
 

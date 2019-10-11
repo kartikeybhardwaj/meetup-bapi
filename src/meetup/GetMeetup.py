@@ -40,6 +40,7 @@ class GetMeetup:
                 responseObj["responseId"] = 111
                 responseObj["message"] = "this meetup does not exists"
         except Exception as ex:
+            print(ex)
             responseObj["responseId"] = 111
             responseObj["message"] = "some error occurred"
         resp.body = json.dumps(responseObj)

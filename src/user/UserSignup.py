@@ -56,6 +56,7 @@ class UserSignup:
                 responseObj["responseId"] = 111
                 responseObj["message"] = "check if all the fields are valid"
         except Exception as ex:
-                responseObj["responseId"] = 111
-                responseObj["message"] = "some error occurred"
+            print(ex)
+            responseObj["responseId"] = 111
+            responseObj["message"] = "some error occurred"
         resp.body = json.dumps(responseObj)
