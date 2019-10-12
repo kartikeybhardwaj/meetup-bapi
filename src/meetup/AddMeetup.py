@@ -60,6 +60,8 @@ class AddMeetup:
         try:
             # validate required data
             if self.validateTitle() and self.validateDescription() and self.validateTimeline():
+                if "_id" in self.__meetup:
+                    del self.__meetup["_id"]
                 meetupdb = MeetupDb()
                 # insert meetup
                 meetupId = meetupdb.insertMeetup(self.__meetup)
